@@ -1,15 +1,15 @@
 <template>
   <div class="smart-warehouse-app">
-    <!-- 加载指示遮罩 (全息初始化舱) -->
+    <!-- Loading indicator overlay (Holographic initialization pod) -->
     <LoadingOverlay ref="loadingRef" />
 
-    <!-- 顶部数字化大屏管控中心 Header (52px 极简全息条) -->
+    <!-- Top digital large-screen control center Header (52px minimalist holographic bar) -->
     <HeaderBar v-if="!isCleanMode" :theme="currentTheme" @toggle-theme="handleToggleTheme" />
 
-    <!-- 左侧：全息运营态势监控 HUD (吞吐量 / AGV 调度 / 立垛库容) -->
+    <!-- Left: Holographic operations situational monitoring HUD (Throughput / AGV Scheduling / Stacker storage capacity) -->
     <LeftTelemetryHud v-if="!isCleanMode" />
 
-    <!-- 右侧：设施负荷监控 + 3D 视角多维控制坞 HUD -->
+    <!-- Right: Facility load monitoring + 3D multi-dimensional view control dock HUD -->
     <RightEquipmentHud
       v-if="!isCleanMode"
       ref="controlsRef"
@@ -20,10 +20,10 @@
       @toggle-play="handleTogglePlay"
     />
 
-    <!-- 底部操作提示栏 (深色磨砂微晶胶囊) -->
+    <!-- Bottom operation hint bar (Dark frosted microcrystalline capsule) -->
     <TipBar v-if="!isCleanMode" />
 
-    <!-- 3D 实体吸附与自适应防越界弹窗 (暗色微晶科技卡片) -->
+    <!-- 3D entity snapping and adaptive anti-boundary popup (Dark microcrystalline tech card) -->
     <AnchoredPopup
       :visible="popupVisible"
       :detail="popupDetail"
@@ -35,13 +35,14 @@
       @close="closePopup"
     />
 
-    <!-- Three.js WebGL 画布容器 -->
+    <!-- Three.js WebGL canvas container -->
     <div ref="canvasContainer" class="canvas-container"></div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import HeaderBar from './components/HeaderBar.vue';
 import LeftTelemetryHud from './components/LeftTelemetryHud.vue';
 import RightEquipmentHud from './components/RightEquipmentHud.vue';
@@ -52,13 +53,15 @@ import { WarehouseScene } from './core/WarehouseScene';
 import { ENTITY_DATA } from './core/constants';
 import { EntityDetail, EntityKey } from './types/warehouse';
 
+const { t } = useI18n();
+
 const canvasContainer = ref<HTMLElement | null>(null);
 const loadingRef = ref<InstanceType<typeof LoadingOverlay> | null>(null);
 const controlsRef = ref<InstanceType<typeof RightEquipmentHud> | null>(null);
 
 let sceneInstance: WarehouseScene | null = null;
 
-// 弹窗状态
+// Popup state
 const popupVisible = ref(false);
 const popupDetail = ref<EntityDetail | null>(null);
 const popupPos = ref({ x: 0, y: 0 });
@@ -130,7 +133,7 @@ onMounted(async () => {
 
   sceneInstance = new WarehouseScene(canvasContainer.value);
 
-  // 拾取监听
+  // Picking listener
   sceneInstance.onPick((entityKey: EntityKey) => {
     const data = ENTITY_DATA[entityKey];
     if (data) {
@@ -139,12 +142,12 @@ onMounted(async () => {
     }
   });
 
-  // 空白点击
+  // Blank click
   sceneInstance.onBlankClick(() => {
     closePopup();
   });
 
-  // 逐帧投影计算
+  // Per-frame projection calculation
   sceneInstance.onPositionUpdate((x: number, y: number, behind: boolean) => {
     popupPos.value = { x, y };
     popupBehind.value = behind;
@@ -198,8 +201,8 @@ onMounted(async () => {
       }
     }
   } catch (err: any) {
-    console.error('模型加载失败:', err);
-    loadingRef.value?.setError('模型加载失败，请确认资源文件存在');
+    console.error(t('app.modelLoadFailed'), err);
+    loadingRef.value?.setError(t('app.modelLoadFailedConfirmResourceFiles'));
   }
 });
 
@@ -211,7 +214,7 @@ onUnmounted(() => {
 </script>
 
 <style>
-/* 全局基础重置与暗色主题背景 */
+/* Global base reset and dark theme background */
 *, *::before, *::after {
   margin: 0;
   padding: 0;

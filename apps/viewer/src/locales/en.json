@@ -1,0 +1,82 @@
+{
+  "anchoredPopup": {
+    "close": "Close"
+  },
+  "app": {
+    "modelLoadFailed": "Model loading failed:",
+    "modelLoadFailedConfirmResourceFiles": "Model loading failed. Please confirm the resource files exist."
+  },
+  "headerBar": {
+    "brandHub": "Automated Warehouse Control Center",
+    "fullscreenTooltip": "Toggle fullscreen immersive display",
+    "globalDigitalTwin": "Full-Site Digital Twin",
+    "liveTwin": "Live Digital Twin",
+    "mainTitle": "Smart Warehouse Digital Twin Control Platform",
+    "themeCyber": "Cyber Deep Space",
+    "themeDaylight": "Daylight Showroom",
+    "themeTitleCyber": "Current: Cyber Deep Space holographic mode; click to switch to Daylight Showroom mode",
+    "themeTitleDaylight": "Current: Daylight Showroom Sandbox mode; click to switch to Cyber Deep Space mode"
+  },
+  "leftTelemetryHud": {
+    "agv": {
+      "averageBattery": "Average Battery",
+      "averageSpeed": "Average Speed",
+      "obstacleAvoidance": "Autonomous Obstacle Avoidance",
+      "title": "AGV Capacity Scheduling Status",
+      "unit": "units"
+    },
+    "ariaLabel": "Holographic Operations Monitoring",
+    "storage": {
+      "eastSortingStack": "East Sorting Stack:",
+      "southBufferArea": "South Buffer Stack Area:",
+      "title": "High-Bay Pallet Storage Capacity Monitoring",
+      "turnoverRate": "Location Turnover Rate:"
+    },
+    "throughput": {
+      "inbound": "Inbound Today",
+      "outbound": "Outbound Today",
+      "title": "Today's Warehouse Throughput",
+      "unit": "items"
+    }
+  },
+  "loadingOverlay": {
+    "brandMain": "Smart Warehouse Digital Twin Control Platform",
+    "frameRateTarget": "Frame rate target",
+    "initError": "Initialization error. Please check the network or resource files.",
+    "ready": "[Ready] Full-domain digital twin handshake complete. Entering monitoring dashboard...",
+    "resourceItems": "Resources",
+    "shadingPipeline": "Shading pipeline",
+    "stage1": "[Stage 1/3] Deconstructing 3D geometry topology and physical materials (GLTF/PBR)...",
+    "stage2": "[Stage 2/3] Planning AGV laser line-following paths and closed-loop state machine...",
+    "stage3": "[Stage 3/3] Assembling holographic dual-situation HUD and microcrystalline reflection pipeline..."
+  },
+  "rightEquipmentHud": {
+    "ariaLabel": "Facility and Environment Holographic Monitoring",
+    "coldChainBadge": "100% Compliant",
+    "coldChainTitle": "Constant-Temperature Cold-Chain Airlock",
+    "dockDispatchTitle": "Dock Berth Dispatch",
+    "dockFullBadge": "3/3 Full",
+    "humidityLabel": "Interior Humidity",
+    "pauseMotion": "Pause scene logistics motion",
+    "pauseResumeTitle": "Pause/resume AGV and conveyor motion in scene (Shortcut Space)",
+    "pressureDiffLabel": "Airlock Pressure Diff.",
+    "redundancyLabel": "Dual-Unit Redundancy",
+    "redundancyValue": "Primary/Backup Normal",
+    "reset": "Reset",
+    "resetTitle": "Reset to isometric overview (Shortcut 0 / R)",
+    "resumeMotion": "Resume scene logistics motion",
+    "tempRangeLabel": "Standard Temperature Range",
+    "topView": "Top View",
+    "topViewTitle": "Switch to top view (Shortcut T)",
+    "viewControlTitle": "3D Multi-View Control",
+    "zoomIn": "Zoom In",
+    "zoomInTitle": "Zoom in scene (Shortcut +)",
+    "zoomOut": "Zoom Out",
+    "zoomOutTitle": "Zoom out scene (Shortcut -)"
+  },
+  "tipBar": {
+    "tapObjects": "Tap the robotic arm workstation, pallet stack, cold storage door, AGV, conveyor belt, or truck",
+    "tipLabel": "Tip:",
+    "viewDataAndZoom": "to view real-time sensor data · Use the mouse wheel/gestures to zoom the 3D view in multiple dimensions"
+  }
+}

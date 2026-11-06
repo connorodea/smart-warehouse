@@ -1,17 +1,17 @@
 <template>
   <div v-if="visible" class="loading-overlay" :class="{ 'fade-out': isFading }">
-    <!-- 赛博深空背景光网与环境微光 -->
+    <!-- Cyber deep-space background light network and ambient glow -->
     <div class="cyber-bg-glow"></div>
     <div class="cyber-scan-grid"></div>
 
     <div class="loading-card">
-      <!-- 科技角标装饰 -->
+      <!-- Tech corner marker decoration -->
       <div class="corner-bracket top-left"></div>
       <div class="corner-bracket top-right"></div>
       <div class="corner-bracket bottom-left"></div>
       <div class="corner-bracket bottom-right"></div>
 
-      <!-- 顶部长条状态呼吸指示 -->
+      <!-- Top bar status breathing indicator -->
       <div class="card-status-bar">
         <div class="status-pulse-group">
           <span class="pulse-dot"></span>
@@ -20,7 +20,7 @@
         <div class="system-engine-tag">THREE.JS · WEBGL 2.0</div>
       </div>
 
-      <!-- 中心全息旋转雷达与平台主标题 -->
+      <!-- Central holographic rotating radar and platform main title -->
       <div class="brand-hero-section">
         <div class="radar-scan-box">
           <div class="radar-circle outer"></div>
@@ -29,12 +29,12 @@
           <span class="radar-core-icon">📦</span>
         </div>
         <div class="brand-titles">
-          <div class="brand-main">智慧仓储数字孪生管控平台</div>
+          <div class="brand-main">{{ $t('loadingOverlay.brandMain') }}</div>
           <div class="brand-sub">SMART WAREHOUSE DIGITAL TWIN SYSTEM</div>
         </div>
       </div>
 
-      <!-- 进度条与阶段状态解析 -->
+      <!-- Progress bar and stage status parsing -->
       <div class="progress-container">
         <div class="progress-info-row">
           <span class="phase-desc">{{ currentPhaseText }}</span>
@@ -48,16 +48,16 @@
         <div class="resource-meta-row">
           <span v-if="error" class="text-error">{{ error }}</span>
           <span v-else class="resource-text">
-            <span>资源项: <b>{{ items }}/109</b></span>
+            <span>{{ $t('loadingOverlay.resourceItems') }}: <b>{{ items }}/109</b></span>
             <span class="meta-divider">|</span>
-            <span>着色管线: <b>PBR Physical</b></span>
+            <span>{{ $t('loadingOverlay.shadingPipeline') }}: <b>PBR Physical</b></span>
             <span class="meta-divider">|</span>
-            <span>帧率目标: <b>60 FPS</b></span>
+            <span>{{ $t('loadingOverlay.frameRateTarget') }}: <b>60 FPS</b></span>
           </span>
         </div>
       </div>
 
-      <!-- 底部通信握手指示 -->
+      <!-- Bottom communication handshake indicator -->
       <div class="loading-footer">
         <span>CONNECTING TO WMS/WCS TELEMETRY BUS · REAL-TIME 60 FPS TWIN</span>
       </div>
@@ -67,6 +67,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const visible = ref(true);
 const isFading = ref(false);
@@ -75,11 +78,11 @@ const items = ref(0);
 const error = ref('');
 
 const currentPhaseText = computed(() => {
-  if (error.value) return '初始化遇到异常，请检查网络或资源文件';
-  if (progress.value < 35) return '【阶段 1/3】解构 3D 几何拓扑与物理材质 (GLTF/PBR)...';
-  if (progress.value < 75) return '【阶段 2/3】规划 AGV 激光巡线轨迹与闭环状态机...';
-  if (progress.value < 99) return '【阶段 3/3】装配全息双态势 HUD 与微晶反射管线...';
-  return '【就绪】全域数字孪生完成握手，即将进入监控大屏...';
+  if (error.value) return t('loadingOverlay.initError');
+  if (progress.value < 35) return t('loadingOverlay.stage1');
+  if (progress.value < 75) return t('loadingOverlay.stage2');
+  if (progress.value < 99) return t('loadingOverlay.stage3');
+  return t('loadingOverlay.ready');
 });
 
 function updateProgress(p: number, it: number) {
@@ -133,7 +136,7 @@ defineExpose({
   pointer-events: none;
 }
 
-/* 赛博背景光影 */
+/* Cyber background lighting */
 .cyber-bg-glow {
   position: absolute;
   width: 700px;
@@ -159,7 +162,7 @@ defineExpose({
   pointer-events: none;
 }
 
-/* 主载入卡片 */
+/* Main loading card */
 .loading-card {
   width: 480px;
   background: linear-gradient(135deg, rgba(11, 18, 30, 0.96) 0%, rgba(15, 23, 42, 0.92) 100%);
@@ -173,7 +176,7 @@ defineExpose({
   overflow: hidden;
 }
 
-/* 科技直角边框角标 */
+/* Tech right-angle border corner marker */
 .corner-bracket {
   position: absolute;
   width: 10px;
@@ -206,7 +209,7 @@ defineExpose({
   border-right: 2px solid #00f0ff;
 }
 
-/* 状态顶栏 */
+/* Status top bar */
 .card-status-bar {
   display: flex;
   justify-content: space-between;
@@ -248,7 +251,7 @@ defineExpose({
   border-radius: 4px;
 }
 
-/* 中心标题与雷达 */
+/* Center title and radar */
 .brand-hero-section {
   display: flex;
   align-items: center;
@@ -318,7 +321,7 @@ defineExpose({
   margin-top: 3px;
 }
 
-/* 进度条板块 */
+/* Progress bar section */
 .progress-container {
   display: flex;
   flex-direction: column;
@@ -388,7 +391,7 @@ defineExpose({
   color: #ef4444;
 }
 
-/* 底部状态 */
+/* Bottom status */
 .loading-footer {
   text-align: center;
   font-size: 9px;

@@ -1,22 +1,22 @@
 <template>
   <header class="digital-twin-header">
-    <!-- 左侧：节点编号与运行态指示 -->
+    <!-- Left: node ID and runtime status indicators -->
     <div class="header-left-group">
       <div class="brand-badge">
         <div class="status-pulse-ring">
           <div class="status-dot"></div>
         </div>
-        <span class="live-tag">LIVE 实时孪生</span>
+        <span class="live-tag">LIVE {{ $t('headerBar.liveTwin') }}</span>
       </div>
       <div class="brand-info">
-        <div class="brand-hub">自动化仓储管控中心</div>
-        <div class="brand-code">NODE #WH-A01 · 60 FPS 全域数字孪生</div>
+        <div class="brand-hub">{{ $t('headerBar.brandHub') }}</div>
+        <div class="brand-code">NODE #WH-A01 · 60 FPS {{ $t('headerBar.globalDigitalTwin') }}</div>
       </div>
     </div>
 
-    <!-- 中间：平台主标题与科技装饰轨 -->
+    <!-- Center: platform main title and tech decorative rail -->
     <div class="header-center-group">
-      <div class="main-title">智慧仓储数字孪生管控平台</div>
+      <div class="main-title">{{ $t('headerBar.mainTitle') }}</div>
       <div class="sub-title-track">
         <span class="track-deco-left"></span>
         <span class="sub-title">SMART WAREHOUSE DIGITAL TWIN PLATFORM</span>
@@ -24,37 +24,37 @@
       </div>
     </div>
 
-    <!-- 右侧：天气气象、实时时钟与全屏 -->
+    <!-- Right: weather, live clock, and fullscreen -->
     <div class="header-right-group">
-      <!-- 实时气象感知 -->
+      <!-- Live weather sensing -->
       <div class="weather-card">
         <div class="weather-main">
           <span class="weather-icon">⛅</span>
           <span class="weather-temp">24<span class="temp-unit">°C</span></span>
-          <span class="weather-cond">晴间多云</span>
+          <span class="weather-cond">Partly Cloudy</span>
         </div>
       </div>
 
       <div class="header-v-divider"></div>
 
-      <!-- 实时秒级跳动高精度时钟 -->
+      <!-- Real-time high-precision clock with second-by-second ticking -->
       <div class="clock-card">
         <div class="clock-time">{{ currentTime }}</div>
         <div class="clock-date">{{ currentDate }}</div>
       </div>
 
-      <!-- 孪生场景主题切换 (赛博深空 / 白昼沙盘) -->
+      <!-- Digital twin scene theme switch (Cyber Deep Space / Daylight Sandbox) -->
       <button
         class="theme-toggle-btn"
         @click="$emit('toggle-theme')"
-        :title="theme === 'cyber' ? '当前：赛博深空全息模式，点击切换为白昼展厅模式' : '当前：白昼展厅沙盘模式，点击切换为赛博深空模式'"
+        :title="theme === 'cyber' ? $t('headerBar.themeTitleCyber') : $t('headerBar.themeTitleDaylight')"
       >
         <span class="theme-btn-icon">{{ theme === 'cyber' ? '🌙' : '☀️' }}</span>
-        <span class="theme-btn-text">{{ theme === 'cyber' ? '赛博深空' : '白昼展厅' }}</span>
+        <span class="theme-btn-text">{{ theme === 'cyber' ? $t('headerBar.themeCyber') : $t('headerBar.themeDaylight') }}</span>
       </button>
 
-      <!-- 全屏沉浸按钮 -->
-      <button class="fullscreen-btn" @click="toggleFullscreen" title="切换全屏沉浸大屏">
+      <!-- Fullscreen immersive button -->
+      <button class="fullscreen-btn" @click="toggleFullscreen" :title="$t('headerBar.fullscreenTooltip')">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
           <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
         </svg>
@@ -80,17 +80,17 @@ let timer: number | null = null;
 
 function updateClock() {
   const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, '0');
-  const d = String(now.getDate()).padStart(2, '0');
-  const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-  const week = weekdays[now.getDay()];
   const hh = String(now.getHours()).padStart(2, '0');
   const mm = String(now.getMinutes()).padStart(2, '0');
   const ss = String(now.getSeconds()).padStart(2, '0');
 
   currentTime.value = `${hh}:${mm}:${ss}`;
-  currentDate.value = `${y}年${m}月${d}日 ${week}`;
+  currentDate.value = now.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    weekday: 'long',
+  });
 }
 
 function toggleFullscreen() {
@@ -132,7 +132,7 @@ onUnmounted(() => {
   user-select: none;
 }
 
-/* 顶部全息发光导光线 */
+/* Top holographic glowing guide line */
 .digital-twin-header::after {
   content: '';
   position: absolute;

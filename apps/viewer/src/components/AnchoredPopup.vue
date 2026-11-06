@@ -14,7 +14,7 @@
         </div>
         <div class="header-action-group">
           <span class="popup-tag">{{ detail?.tag }}</span>
-          <span class="popup-close" @click="$emit('close')" title="关闭">&times;</span>
+          <span class="popup-close" @click="$emit('close')" :title="$t('anchoredPopup.close')">&times;</span>
         </div>
       </div>
 
@@ -36,7 +36,7 @@
       </div>
     </div>
 
-    <!-- 动态跟踪指示箭头 -->
+    <!-- Dynamic tracking indicator arrow -->
     <div class="popup-caret" :style="caretStyle"></div>
   </div>
 </template>

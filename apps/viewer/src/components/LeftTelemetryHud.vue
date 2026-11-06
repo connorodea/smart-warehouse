@@ -1,12 +1,12 @@
 <template>
-  <aside class="left-telemetry-hud" aria-label="全息运营态势监控">
-    <!-- 模块 1：今日仓储吞吐量 -->
+  <aside class="left-telemetry-hud" :aria-label="$t('leftTelemetryHud.ariaLabel')">
+    <!-- Module 1: Today's Warehouse Throughput -->
     <div class="hud-card">
       <div class="hud-card-header">
         <div class="header-left">
           <span class="hud-icon blue">📦</span>
           <div>
-            <div class="hud-title">今日仓储吞吐</div>
+            <div class="hud-title">{{ $t('leftTelemetryHud.throughput.title') }}</div>
             <div class="hud-subtitle">DAILY THROUGHPUT</div>
           </div>
         </div>
@@ -17,24 +17,24 @@
 
       <div class="kpi-hero-val">
         <span class="val-num">24,580</span>
-        <span class="val-unit">件</span>
+        <span class="val-unit">{{ $t('leftTelemetryHud.throughput.unit') }}</span>
       </div>
 
       <div class="throughput-split">
         <div class="split-col">
-          <span class="split-label">今日入库</span>
+          <span class="split-label">{{ $t('leftTelemetryHud.throughput.inbound') }}</span>
           <span class="split-val in">13,420</span>
         </div>
         <div class="split-divider"></div>
         <div class="split-col">
-          <span class="split-label">今日出库</span>
+          <span class="split-label">{{ $t('leftTelemetryHud.throughput.outbound') }}</span>
           <span class="split-val out">11,160</span>
         </div>
       </div>
 
       <div class="progress-section">
         <div class="progress-info">
-          <span>当日目标达成率 (27,500件)</span>
+          <span>Daily Target Achievement (27,500 items)</span>
           <span class="progress-pct">89.4%</span>
         </div>
         <div class="hud-progress-track">
@@ -43,59 +43,59 @@
       </div>
     </div>
 
-    <!-- 模块 2：AGV 运力实时态势 -->
+    <!-- Module 2: AGV Capacity Real-Time Status -->
     <div class="hud-card">
       <div class="hud-card-header">
         <div class="header-left">
           <span class="hud-icon cyan">🤖</span>
           <div>
-            <div class="hud-title">AGV 运力调度态势</div>
+            <div class="hud-title">{{ $t('leftTelemetryHud.agv.title') }}</div>
             <div class="hud-subtitle">FLEET DISPATCHING</div>
           </div>
         </div>
         <div class="status-badge live">
-          <span class="pulse-dot"></span> 7台在线
+          <span class="pulse-dot"></span> 7 vehicles online
         </div>
       </div>
 
       <div class="agv-status-grid">
         <div class="status-cell heavy">
-          <div class="cell-num">4 <small>台</small></div>
-          <div class="cell-desc">重载干线运输</div>
+          <div class="cell-num">4 <small>{{ $t('leftTelemetryHud.agv.unit') }}</small></div>
+          <div class="cell-desc">Heavy-Load Trunk Transport</div>
         </div>
         <div class="status-cell empty">
-          <div class="cell-num">2 <small>台</small></div>
-          <div class="cell-desc">空车循轨回流</div>
+          <div class="cell-num">2 <small>{{ $t('leftTelemetryHud.agv.unit') }}</small></div>
+          <div class="cell-desc">Empty Vehicle Track Return</div>
         </div>
         <div class="status-cell dock">
-          <div class="cell-num">1 <small>台</small></div>
-          <div class="cell-desc">月台驳运装载</div>
+          <div class="cell-num">1 <small>{{ $t('leftTelemetryHud.agv.unit') }}</small></div>
+          <div class="cell-desc">Dock Shuttle Loading</div>
         </div>
       </div>
 
       <div class="agv-meta-row">
         <div class="meta-item">
-          <span class="meta-label">自主避障</span>
-          <span class="meta-val green">激光雷达正常</span>
+          <span class="meta-label">{{ $t('leftTelemetryHud.agv.obstacleAvoidance') }}</span>
+          <span class="meta-val green">LiDAR Normal</span>
         </div>
         <div class="meta-item">
-          <span class="meta-label">平均车速</span>
+          <span class="meta-label">{{ $t('leftTelemetryHud.agv.averageSpeed') }}</span>
           <span class="meta-val">1.5 m/s</span>
         </div>
         <div class="meta-item">
-          <span class="meta-label">平均电量</span>
+          <span class="meta-label">{{ $t('leftTelemetryHud.agv.averageBattery') }}</span>
           <span class="meta-val">94%</span>
         </div>
       </div>
     </div>
 
-    <!-- 模块 3：高位立体立垛库容 -->
+    <!-- Module 3: High-Bay Pallet Storage Capacity -->
     <div class="hud-card">
       <div class="hud-card-header">
         <div class="header-left">
           <span class="hud-icon indigo">🏭</span>
           <div>
-            <div class="hud-title">高位立垛库容监控</div>
+            <div class="hud-title">{{ $t('leftTelemetryHud.storage.title') }}</div>
             <div class="hud-subtitle">STORAGE CAPACITY</div>
           </div>
         </div>
@@ -106,8 +106,8 @@
 
       <div class="progress-section compact">
         <div class="progress-info">
-          <span>密集库位利用率 (708 / 800 托)</span>
-          <span class="progress-pct">剩余 92 托</span>
+          <span>Dense Storage Location Utilization (708 / 800 pallets)</span>
+          <span class="progress-pct">92 pallets remaining</span>
         </div>
         <div class="hud-progress-track">
           <div class="hud-progress-bar emerald-glow" style="width: 88.4%"></div>
@@ -117,17 +117,17 @@
       <div class="pallet-meta-row">
         <div class="pallet-stat">
           <span class="p-dot amber"></span>
-          <span class="p-label">东侧分拣立垛:</span>
-          <span class="p-val">368 托</span>
+          <span class="p-label">{{ $t('leftTelemetryHud.storage.eastSortingStack') }}</span>
+          <span class="p-val">368 pallets</span>
         </div>
         <div class="pallet-stat">
           <span class="p-dot blue"></span>
-          <span class="p-label">南侧缓存垛区:</span>
-          <span class="p-val">340 托</span>
+          <span class="p-label">{{ $t('leftTelemetryHud.storage.southBufferArea') }}</span>
+          <span class="p-val">340 pallets</span>
         </div>
         <div class="pallet-stat">
           <span class="p-dot cyan"></span>
-          <span class="p-label">库位动销周转率:</span>
+          <span class="p-label">{{ $t('leftTelemetryHud.storage.turnoverRate') }}</span>
           <span class="p-val highlight">95.2%</span>
         </div>
       </div>
@@ -153,7 +153,7 @@
   user-select: none;
 }
 
-/* 赛博微晶卡片基础 */
+/* Cyber microcrystal card base */
 .hud-card {
   background: linear-gradient(135deg, rgba(11, 18, 30, 0.88) 0%, rgba(15, 23, 42, 0.78) 100%);
   border: 1px solid rgba(0, 240, 255, 0.22);
@@ -172,7 +172,7 @@
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 240, 255, 0.12);
 }
 
-/* 顶部科技光角 */
+/* Top tech light corner */
 .hud-card::before {
   content: '';
   position: absolute;
@@ -235,7 +235,7 @@
   margin-top: 1px;
 }
 
-/* 趋势胶囊 */
+/* Trend capsule */
 .trend-badge {
   font-size: 11px;
   font-weight: 700;
@@ -253,7 +253,7 @@
   margin-right: 1px;
 }
 
-/* 核心巨大数值 */
+/* Core large value */
 .kpi-hero-val {
   display: flex;
   align-items: baseline;
@@ -274,7 +274,7 @@
   font-weight: 600;
 }
 
-/* 入库/出库分项 */
+/* Inbound/outbound breakdown */
 .throughput-split {
   display: flex;
   align-items: center;
@@ -306,7 +306,7 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* 进度条组 */
+/* Progress bar group */
 .progress-section {
   display: flex;
   flex-direction: column;
@@ -347,7 +347,7 @@
   box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
 }
 
-/* AGV 网格与指示 */
+/* AGV grid and indicators */
 .status-badge.live {
   display: flex;
   align-items: center;
@@ -432,7 +432,7 @@
   color: #34d399;
 }
 
-/* 货架利用率 */
+/* Shelf utilization */
 .capacity-rate {
   font-size: 16px;
   font-weight: 800;

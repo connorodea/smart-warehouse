@@ -1,59 +1,59 @@
 <template>
-  <aside class="right-equipment-hud" aria-label="设施与环境全息监控">
-    <!-- 模块 1：月台泊位负荷 -->
+  <aside class="right-equipment-hud" :aria-label="$t('rightEquipmentHud.ariaLabel')">
+    <!-- Module 1: Dock Berth Load -->
     <div class="hud-card">
       <div class="hud-card-header">
         <div class="header-left">
           <span class="hud-icon amber">🚛</span>
           <div>
-            <div class="hud-title">月台泊位调度</div>
+            <div class="hud-title">{{ $t('rightEquipmentHud.dockDispatchTitle') }}</div>
             <div class="hud-subtitle">DOCKING BAYS</div>
           </div>
         </div>
         <div class="status-badge amber">
-          3/3 满载
+          {{ $t('rightEquipmentHud.dockFullBadge') }}
         </div>
       </div>
 
       <div class="dock-list">
         <div class="dock-item active">
           <div class="dock-title-row">
-            <span class="dock-name">1号月台 (伸缩滚筒)</span>
-            <span class="dock-tag green">高速驳运中</span>
+            <span class="dock-name">Dock 1 (Telescopic Roller)</span>
+            <span class="dock-tag green">High-Speed Transfer</span>
           </div>
-          <div class="dock-desc">自动化输送线 120件/分 · 联动AGV接驳</div>
+          <div class="dock-desc">Automated conveyor 120 pcs/min · AGV-linked transfer</div>
         </div>
 
         <div class="dock-item">
           <div class="dock-title-row">
-            <span class="dock-name">2号月台 (冷链重挂)</span>
-            <span class="dock-tag blue">温控对接</span>
+            <span class="dock-name">Dock 2 (Cold-Chain Trailer)</span>
+            <span class="dock-tag blue">Temperature-Controlled Docking</span>
           </div>
-          <div class="dock-desc">生鲜冷链挂车 · 气密通道密封完成</div>
+          <div class="dock-desc">Fresh-produce cold-chain trailer · Airlock sealed</div>
         </div>
 
         <div class="dock-item">
           <div class="dock-title-row">
-            <span class="dock-name">3号月台 (干线厢车)</span>
-            <span class="dock-tag purple">出库装卸</span>
+            <span class="dock-name">Dock 3 (Line-Haul Box Truck)</span>
+            <span class="dock-tag purple">Outbound Loading</span>
           </div>
-          <div class="dock-desc">标准集装箱挂车 · 托盘集货出库</div>
+          <div class="dock-desc">Standard container trailer · Pallet consolidation outbound</div>
         </div>
       </div>
     </div>
 
-    <!-- 模块 2：恒温冷链气密环境 -->
+    <!-- Module 2: Constant-Temperature Cold-Chain Airlock Environment -->
     <div class="hud-card">
       <div class="hud-card-header">
         <div class="header-left">
           <span class="hud-icon teal">❄️</span>
           <div>
-            <div class="hud-title">恒温冷链气密仓</div>
+            <div class="hud-title">{{ $t('rightEquipmentHud.coldChainTitle') }}</div>
             <div class="hud-subtitle">CLIMATE CONTROL</div>
           </div>
         </div>
         <div class="status-badge green">
-          100% 达标
+          {{ $t('rightEquipmentHud.coldChainBadge') }}
         </div>
       </div>
 
@@ -63,65 +63,65 @@
           <span class="temp-unit">°C</span>
         </div>
         <div class="temp-target">
-          <span class="target-label">温控标准区间</span>
+          <span class="target-label">{{ $t('rightEquipmentHud.tempRangeLabel') }}</span>
           <span class="target-range">-18.0 ± 0.5 °C</span>
         </div>
       </div>
 
       <div class="env-metrics-grid">
         <div class="env-metric-item">
-          <span class="env-label">库内湿度</span>
+          <span class="env-label">{{ $t('rightEquipmentHud.humidityLabel') }}</span>
           <span class="env-val">48% <small>RH</small></span>
         </div>
         <div class="env-metric-item">
-          <span class="env-label">气密压差</span>
+          <span class="env-label">{{ $t('rightEquipmentHud.pressureDiffLabel') }}</span>
           <span class="env-val">+25 <small>Pa</small></span>
         </div>
         <div class="env-metric-item">
-          <span class="env-label">双机冗余</span>
-          <span class="env-val green">主备正常</span>
+          <span class="env-label">{{ $t('rightEquipmentHud.redundancyLabel') }}</span>
+          <span class="env-val green">{{ $t('rightEquipmentHud.redundancyValue') }}</span>
         </div>
       </div>
     </div>
 
-    <!-- 模块 3：3D 场景与视角控制坞 -->
+    <!-- Module 3: 3D Scene and View Control Dock -->
     <div class="hud-card controls-card">
       <div class="hud-card-header compact">
         <div class="header-left">
           <span class="hud-icon cyan">🧭</span>
           <div>
-            <div class="hud-title">3D 多维视角控制</div>
+            <div class="hud-title">{{ $t('rightEquipmentHud.viewControlTitle') }}</div>
             <div class="hud-subtitle">SCENE PERSPECTIVE</div>
           </div>
         </div>
       </div>
 
       <div class="controls-action-grid">
-        <button class="ctrl-btn" @click="$emit('zoom-in')" title="放大场景 (快捷键 +)">
-          <span class="btn-icon">＋</span>
-          <span class="btn-text">放大</span>
+        <button class="ctrl-btn" @click="$emit('zoom-in')" :title="$t('rightEquipmentHud.zoomInTitle')">
+          <span class="btn-icon">+</span>
+          <span class="btn-text">{{ $t('rightEquipmentHud.zoomIn') }}</span>
         </button>
-        <button class="ctrl-btn" @click="$emit('zoom-out')" title="缩小场景 (快捷键 -)">
-          <span class="btn-icon">－</span>
-          <span class="btn-text">缩小</span>
+        <button class="ctrl-btn" @click="$emit('zoom-out')" :title="$t('rightEquipmentHud.zoomOutTitle')">
+          <span class="btn-icon">−</span>
+          <span class="btn-text">{{ $t('rightEquipmentHud.zoomOut') }}</span>
         </button>
         <button
           class="ctrl-btn"
           :class="{ active: currentMode === 'reset' }"
           @click="handleReset"
-          title="复位至等轴测全貌 (快捷键 0 / R)"
+          :title="$t('rightEquipmentHud.resetTitle')"
         >
           <span class="btn-icon">⟲</span>
-          <span class="btn-text">复位</span>
+          <span class="btn-text">{{ $t('rightEquipmentHud.reset') }}</span>
         </button>
         <button
           class="ctrl-btn"
           :class="{ active: currentMode === 'top' }"
           @click="handleTopView"
-          title="切换为顶视平面 (快捷键 T)"
+          :title="$t('rightEquipmentHud.topViewTitle')"
         >
           <span class="btn-icon">📐</span>
-          <span class="btn-text">顶视</span>
+          <span class="btn-text">{{ $t('rightEquipmentHud.topView') }}</span>
         </button>
       </div>
 
@@ -129,10 +129,10 @@
         class="playback-btn"
         :class="{ paused: isPaused }"
         @click="handleTogglePlay"
-        title="暂停/恢复场景内 AGV 与传送带运动 (快捷键 空格)"
+        :title="$t('rightEquipmentHud.pauseResumeTitle')"
       >
         <span class="playback-icon">{{ isPaused ? '▶' : '⏸' }}</span>
-        <span>{{ isPaused ? '恢复场景物流运动' : '暂停场景物流运动' }}</span>
+        <span>{{ isPaused ? $t('rightEquipmentHud.resumeMotion') : $t('rightEquipmentHud.pauseMotion') }}</span>
       </button>
     </div>
   </aside>
@@ -191,7 +191,7 @@ defineExpose({
   user-select: none;
 }
 
-/* 赛博微晶卡片基础 */
+/* Cyber micro-crystal card base */
 .hud-card {
   background: linear-gradient(135deg, rgba(11, 18, 30, 0.88) 0%, rgba(15, 23, 42, 0.78) 100%);
   border: 1px solid rgba(0, 240, 255, 0.22);
@@ -275,7 +275,7 @@ defineExpose({
   margin-top: 1px;
 }
 
-/* 状态药丸 */
+/* Status pill */
 .status-badge {
   font-size: 10px;
   font-weight: 700;
@@ -294,7 +294,7 @@ defineExpose({
   border: 1px solid rgba(16, 185, 129, 0.35);
 }
 
-/* 月台列表 */
+/* Dock list */
 .dock-list {
   display: flex;
   flex-direction: column;
@@ -335,7 +335,7 @@ defineExpose({
   color: #64748b;
 }
 
-/* 冷链温控行 */
+/* Cold-chain temperature control row */
 .temp-hero-row {
   display: flex;
   justify-content: space-between;
@@ -412,7 +412,7 @@ defineExpose({
   color: #34d399;
 }
 
-/* 3D 视角操作坞 */
+/* 3D view control dock */
 .controls-card {
   padding-bottom: 12px;
 }
