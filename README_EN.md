@@ -140,10 +140,10 @@ For more architectural details, please refer to the [Architecture Specification]
 ```text
 smart-warehouse/
 ├── docs/                          # Architectural documentation & HD showcase gallery
-├── public/
+├── apps/viewer/public/
 │   ├── smart_warehouse.glb        # High-precision 3D warehouse digital twin model
 │   └── models/
-├── src/
+├── apps/viewer/src/
 │   ├── components/                # HUD overlay components & popup dialogs
 │   ├── core/
 │   │   ├── WarehouseScene.ts      # Three.js core scene manager & render loop
@@ -173,16 +173,16 @@ git clone https://github.com/Xxcool/smart-warehouse.git
 cd smart-warehouse
 
 # 2. Install dependencies
-npm install # or pnpm install
+pnpm install
 
 # 3. Start local development server (default port: 8088)
-npm run dev
+pnpm dev
 
 # 4. Build for production
-npm run build
+pnpm build
 
 # 5. Preview production build locally
-npm run preview
+pnpm --filter @twin/viewer preview
 ```
 
 Open your browser at `http://localhost:8088` to explore the digital twin platform.

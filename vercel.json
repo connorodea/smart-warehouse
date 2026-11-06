@@ -1,8 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm --filter @twin/viewer build",
+  "outputDirectory": "apps/viewer/dist",
   "cleanUrls": true,
   "headers": [
     {
@@ -33,6 +34,9 @@
     }
   ],
   "rewrites": [
-    { "source": "/((?!assets|models|.*\\..*).*)", "destination": "/index.html" }
+    {
+      "source": "/((?!assets|models|.*\\..*).*)",
+      "destination": "/index.html"
+    }
   ]
 }

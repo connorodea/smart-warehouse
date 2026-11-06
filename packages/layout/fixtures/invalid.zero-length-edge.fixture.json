@@ -1,0 +1,531 @@
+{
+  "_fixture": "test-only",
+  "_note": "Hand-built TEST fixture. Never a product default or demo value.",
+  "description": "Edge E2 has length 0.",
+  "expectValid": false,
+  "expectReasons": [
+    "zero-length-edge: pathGraph.edges[E2].length: edge length is 0"
+  ],
+  "layout": {
+    "schemaVersion": 1,
+    "id": "tiny-loop",
+    "name": "Tiny one-loop warehouse (test fixture)",
+    "zones": [
+      {
+        "id": "Z-RCV",
+        "kind": "receiving",
+        "polygon": [
+          {
+            "x": 0,
+            "y": 0,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 5,
+            "y": 0,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 5,
+            "y": 10,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 0,
+            "y": 10,
+            "unit": "m",
+            "source": "cad"
+          }
+        ]
+      },
+      {
+        "id": "Z-STO",
+        "kind": "storage",
+        "polygon": [
+          {
+            "x": 5,
+            "y": 0,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 15,
+            "y": 0,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 15,
+            "y": 10,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 5,
+            "y": 10,
+            "unit": "m",
+            "source": "cad"
+          }
+        ]
+      },
+      {
+        "id": "Z-PP",
+        "kind": "pick-pack",
+        "polygon": [
+          {
+            "x": 15,
+            "y": 0,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 25,
+            "y": 0,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 25,
+            "y": 10,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 15,
+            "y": 10,
+            "unit": "m",
+            "source": "cad"
+          }
+        ]
+      },
+      {
+        "id": "Z-SHP",
+        "kind": "shipping",
+        "polygon": [
+          {
+            "x": 25,
+            "y": 0,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 32,
+            "y": 0,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 32,
+            "y": 10,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 25,
+            "y": 10,
+            "unit": "m",
+            "source": "cad"
+          }
+        ]
+      },
+      {
+        "id": "Z-PRK",
+        "kind": "parking",
+        "polygon": [
+          {
+            "x": 0,
+            "y": 10,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 5,
+            "y": 10,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 5,
+            "y": 14,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 0,
+            "y": 14,
+            "unit": "m",
+            "source": "cad"
+          }
+        ]
+      },
+      {
+        "id": "Z-CHG",
+        "kind": "charging",
+        "polygon": [
+          {
+            "x": 5,
+            "y": 10,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 10,
+            "y": 10,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 10,
+            "y": 14,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 5,
+            "y": 14,
+            "unit": "m",
+            "source": "cad"
+          }
+        ]
+      }
+    ],
+    "docks": [
+      {
+        "id": "D-IN",
+        "kind": "inbound",
+        "zoneId": "Z-RCV",
+        "position": {
+          "x": 0,
+          "y": 5,
+          "unit": "m",
+          "source": "cad"
+        },
+        "accessNodeId": "N-IN"
+      },
+      {
+        "id": "D-OUT",
+        "kind": "outbound",
+        "zoneId": "Z-SHP",
+        "position": {
+          "x": 30,
+          "y": 5,
+          "unit": "m",
+          "source": "cad"
+        },
+        "accessNodeId": "N-OUT"
+      }
+    ],
+    "racks": [
+      {
+        "id": "R1",
+        "zoneId": "Z-STO",
+        "position": {
+          "x": 10,
+          "y": 6,
+          "unit": "m",
+          "source": "cad"
+        },
+        "rotation": {
+          "value": 0,
+          "unit": "deg",
+          "source": "cad"
+        },
+        "rows": {
+          "value": 1,
+          "source": "cad"
+        },
+        "levels": {
+          "value": 4,
+          "source": "cad"
+        },
+        "slots": {
+          "value": 10,
+          "source": "cad"
+        },
+        "slotCapacity": {
+          "value": 1,
+          "source": "owner"
+        },
+        "faces": [
+          {
+            "id": "R1-A",
+            "side": "front",
+            "accessNodeId": "N-R1A"
+          },
+          {
+            "id": "R1-B",
+            "side": "back",
+            "accessNodeId": "N-R1B"
+          }
+        ]
+      }
+    ],
+    "stations": [
+      {
+        "id": "ST1",
+        "kind": "pick-pack",
+        "zoneId": "Z-PP",
+        "position": {
+          "x": 20,
+          "y": 6,
+          "unit": "m",
+          "source": "cad"
+        },
+        "accessNodeId": "N-ST",
+        "serviceTime": {
+          "kind": "lognormal",
+          "mean": {
+            "value": 45,
+            "unit": "s",
+            "source": "owner"
+          },
+          "stdDev": {
+            "value": 15,
+            "unit": "s",
+            "source": "owner"
+          }
+        }
+      }
+    ],
+    "conveyors": [
+      {
+        "id": "CV1",
+        "fromId": "ST1",
+        "toId": "D-OUT",
+        "path": [
+          {
+            "x": 21,
+            "y": 6,
+            "unit": "m",
+            "source": "cad"
+          },
+          {
+            "x": 29,
+            "y": 6,
+            "unit": "m",
+            "source": "cad"
+          }
+        ],
+        "rate": {
+          "value": 600,
+          "unit": "items/h",
+          "source": "owner"
+        }
+      }
+    ],
+    "pathGraph": {
+      "nodes": [
+        {
+          "id": "N-IN",
+          "position": {
+            "x": 0,
+            "y": 5,
+            "unit": "m",
+            "source": "cad"
+          }
+        },
+        {
+          "id": "N-R1A",
+          "position": {
+            "x": 10,
+            "y": 4,
+            "unit": "m",
+            "source": "cad"
+          }
+        },
+        {
+          "id": "N-ST",
+          "position": {
+            "x": 20,
+            "y": 5,
+            "unit": "m",
+            "source": "cad"
+          }
+        },
+        {
+          "id": "N-OUT",
+          "position": {
+            "x": 30,
+            "y": 5,
+            "unit": "m",
+            "source": "cad"
+          }
+        },
+        {
+          "id": "N-R1B",
+          "position": {
+            "x": 10,
+            "y": 8,
+            "unit": "m",
+            "source": "cad"
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "E1",
+          "from": "N-IN",
+          "to": "N-R1A",
+          "length": {
+            "value": 10.05,
+            "unit": "m",
+            "source": "derived"
+          },
+          "capacity": {
+            "value": 1,
+            "unit": "vehicles",
+            "source": "derived"
+          }
+        },
+        {
+          "id": "E2",
+          "from": "N-R1A",
+          "to": "N-ST",
+          "length": {
+            "value": 0,
+            "unit": "m",
+            "source": "derived"
+          },
+          "capacity": {
+            "value": 1,
+            "unit": "vehicles",
+            "source": "derived"
+          }
+        },
+        {
+          "id": "E3",
+          "from": "N-ST",
+          "to": "N-OUT",
+          "length": {
+            "value": 10,
+            "unit": "m",
+            "source": "derived"
+          },
+          "capacity": {
+            "value": 1,
+            "unit": "vehicles",
+            "source": "derived"
+          }
+        },
+        {
+          "id": "E4",
+          "from": "N-OUT",
+          "to": "N-R1B",
+          "length": {
+            "value": 20.1,
+            "unit": "m",
+            "source": "derived"
+          },
+          "capacity": {
+            "value": 1,
+            "unit": "vehicles",
+            "source": "derived"
+          }
+        },
+        {
+          "id": "E5",
+          "from": "N-R1B",
+          "to": "N-IN",
+          "length": {
+            "value": 10.4,
+            "unit": "m",
+            "source": "derived"
+          },
+          "capacity": {
+            "value": 1,
+            "unit": "vehicles",
+            "source": "derived"
+          }
+        }
+      ]
+    },
+    "fleet": [
+      {
+        "id": "amr-1",
+        "vehicleType": "amr",
+        "model": "owner-specified AMR",
+        "count": {
+          "value": 2,
+          "source": "owner"
+        },
+        "speed": {
+          "value": 1.5,
+          "unit": "m/s",
+          "source": "owner"
+        },
+        "loadTime": {
+          "value": 20,
+          "unit": "s",
+          "source": "owner"
+        },
+        "unloadTime": {
+          "value": 20,
+          "unit": "s",
+          "source": "owner"
+        },
+        "battery": {
+          "runtime": {
+            "value": 8,
+            "unit": "h",
+            "source": "owner"
+          },
+          "chargeTime": {
+            "value": 2,
+            "unit": "h",
+            "source": "owner"
+          },
+          "rechargeThreshold": {
+            "value": 20,
+            "unit": "%",
+            "source": "owner"
+          }
+        }
+      }
+    ],
+    "shifts": [
+      {
+        "id": "day",
+        "name": "Day shift",
+        "start": "07:00",
+        "end": "15:30",
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri"
+        ],
+        "staff": {
+          "value": 4,
+          "source": "owner"
+        }
+      }
+    ],
+    "costs": {
+      "currency": "USD",
+      "labourRatePerHour": {
+        "value": 22,
+        "unit": "currency/h",
+        "source": "owner"
+      },
+      "vehicles": [
+        {
+          "fleetId": "amr-1",
+          "capexPerUnit": {
+            "value": 35000,
+            "unit": "currency",
+            "source": "owner"
+          },
+          "maintenancePerYear": {
+            "value": 2500,
+            "unit": "currency/year",
+            "source": "owner"
+          }
+        }
+      ]
+    }
+  }
+}
