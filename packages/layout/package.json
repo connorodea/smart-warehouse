@@ -1,0 +1,26 @@
+{
+  "name": "@twin/layout",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Layout JSON schema (zod), validator and test fixtures for the warehouse digital twin.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --coverage",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^3.2.4",
+    "typescript": "^5.6.2",
+    "vitest": "^3.2.4"
+  }
+}

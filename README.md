@@ -87,10 +87,10 @@ https://github.com/user-attachments/assets/c100f24e-c684-498b-a913-01fa0e48ea68
 ```text
 smart-warehouse/
 ├── docs/                          # 设计说明与高清效果图集
-├── public/
+├── apps/viewer/public/
 │   ├── smart_warehouse.glb        # 3D 核心仓储数字孪生模型文件
 │   └── models/
-├── src/
+├── apps/viewer/src/
 │   ├── components/                # 工业大屏各业务 HUD 组件与弹窗
 │   ├── core/
 │   │   ├── WarehouseScene.ts      # Three.js 核心场景管理器与渲染驱动
@@ -114,13 +114,13 @@ git clone https://github.com/Xxcool/smart-warehouse.git
 cd smart-warehouse
 
 # 2. 安装项目依赖
-npm install # 或 pnpm install
+pnpm install
 
 # 3. 启动本地开发服务 (默认端口 8088)
-npm run dev
+pnpm dev
 
 # 4. 构建生产产物
-npm run build
+pnpm build
 ```
 
 ---
