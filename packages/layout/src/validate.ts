@@ -1,6 +1,6 @@
 import type { z } from 'zod';
-import { LayoutDraftSchema, LayoutSchema, type Layout, type LayoutDraft } from './schema';
-import type { Source } from './quantity';
+import { LayoutDraftSchema, LayoutSchema, type Dock, type Layout, type LayoutDraft, type ZoneKind } from './schema';
+import type { Point, Source } from './quantity';
 
 /**
  * Rule codes. Every reason string starts with one of these, then the entity and
@@ -11,10 +11,15 @@ export const RULES = {
   duplicateId: 'duplicate-id',
   unknownRef: 'unknown-ref',
   zeroLengthEdge: 'zero-length-edge',
+  edgeLengthMismatch: 'edge-length-mismatch',
   selfLoopEdge: 'self-loop-edge',
+  duplicateEdge: 'duplicate-edge',
+  zoneKindMismatch: 'zone-kind-mismatch',
+  dockDirectionMissing: 'dock-direction-missing',
   dockNotConnected: 'dock-not-connected',
   rackFaceUnreachable: 'rack-face-unreachable',
   stationUnreachable: 'station-unreachable',
+  chargingUnreachable: 'charging-unreachable',
   fleetEmpty: 'fleet-empty',
   missingOwnerInput: 'missing-owner-input',
   ownerInputSource: 'owner-input-source',
@@ -28,10 +33,12 @@ const reason = (rule: Rule, where: string, message: string) => `${rule}: ${where
 /**
  * Validate a candidate layout before any sim run (spec section 3).
  *
- * Reachability model: a vehicle must be able to drive from a dock to a place and
- * back to a dock. A node is "served" when it is reachable (along directed edges)
- * from at least one dock's access node AND can reach at least one dock's access
- * node. Every rack face and every station must have a served access node.
+ * Reachability model (directed edges). Goods enter at an inbound-capable dock
+ * (`inbound` or `both`) and leave at an outbound-capable dock (`outbound` or `both`).
+ * Every rack face and every station access node must be reachable from at least one
+ * inbound-capable dock's access node AND must reach at least one outbound-capable
+ * dock's access node. When any fleet type has a battery, at least one path node inside
+ * a `charging` zone must be reachable from a dock and lead back to a dock.
  *
  * Owner inputs are never defaulted: each missing one is listed as a reason.
  */
@@ -45,6 +52,7 @@ export function validateLayout(input: unknown): ValidationResult {
     ...checkDuplicateIds(draft),
     ...checkRefs(draft),
     ...checkEdges(draft),
+    ...checkZoneKinds(draft),
     ...checkConnectivity(draft),
     ...checkFleet(draft),
     ...checkOwnerInputs(draft),
@@ -163,16 +171,114 @@ function checkRefs(d: LayoutDraft): string[] {
 
 // ---------- path graph ----------
 
+/**
+ * Edge geometry tolerances. These are validation rules, not model values: they only
+ * decide whether a stated length is believable for the two node positions.
+ * - `MIN_EDGE_LENGTH_M`: a stated length or node-to-node distance below 1 cm is a
+ *   zero-length edge (two nodes on one spot, or a length typed as 0 / rounding noise).
+ * - Length mismatch: |length - distance| may be at most max(1 cm, 1% of distance).
+ *   1 cm absorbs CAD rounding on short edges; 1% absorbs rounding on long ones. A
+ *   path that curves (longer than the straight line) must be split into straight edges.
+ */
+export const MIN_EDGE_LENGTH_M = 0.01;
+export const EDGE_LENGTH_RELATIVE_TOLERANCE = 0.01;
+export const edgeLengthTolerance = (distance: number) =>
+  Math.max(MIN_EDGE_LENGTH_M, EDGE_LENGTH_RELATIVE_TOLERANCE * distance);
+
+const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
+const metres = (v: number) => `${Number(v.toFixed(3))} m`;
+
 function checkEdges(d: LayoutDraft): string[] {
-  return [
-    ...d.pathGraph.edges
-      .filter((e) => e.length.value === 0)
-      .map((e) => reason(RULES.zeroLengthEdge, `pathGraph.edges[${e.id}].length`, 'edge length is 0')),
-    ...d.pathGraph.edges
-      .filter((e) => e.from === e.to)
-      .map((e) => reason(RULES.selfLoopEdge, `pathGraph.edges[${e.id}]`, `edge starts and ends at node "${e.from}"`)),
-  ];
+  const pos = new Map(d.pathGraph.nodes.map((n) => [n.id, n.position]));
+  const out: string[] = [];
+  const firstByPair = new Map<string, string>();
+  for (const e of d.pathGraph.edges) {
+    const at = `pathGraph.edges[${e.id}]`;
+    if (e.from === e.to) {
+      out.push(reason(RULES.selfLoopEdge, at, `edge starts and ends at node "${e.from}"`));
+      continue;
+    }
+    const pair = JSON.stringify([e.from, e.to]);
+    const first = firstByPair.get(pair);
+    if (first !== undefined) {
+      out.push(reason(RULES.duplicateEdge, at, `edge "${first}" already runs from "${e.from}" to "${e.to}"`));
+    } else {
+      firstByPair.set(pair, e.id);
+    }
+    const length = e.length.value;
+    if (length < MIN_EDGE_LENGTH_M) {
+      out.push(reason(RULES.zeroLengthEdge, `${at}.length`, `edge length ${metres(length)} is below the ${metres(MIN_EDGE_LENGTH_M)} minimum`));
+      continue;
+    }
+    const a = pos.get(e.from);
+    const b = pos.get(e.to);
+    // Unknown nodes are reported by checkRefs.
+    if (a === undefined || b === undefined) continue;
+    const dist = distance(a, b);
+    if (dist < MIN_EDGE_LENGTH_M) {
+      out.push(reason(RULES.zeroLengthEdge, at, `nodes "${e.from}" and "${e.to}" are ${metres(dist)} apart, below the ${metres(MIN_EDGE_LENGTH_M)} minimum`));
+    } else if (Math.abs(length - dist) > edgeLengthTolerance(dist)) {
+      out.push(
+        reason(
+          RULES.edgeLengthMismatch,
+          `${at}.length`,
+          `length ${metres(length)} differs from the ${metres(dist)} between nodes "${e.from}" and "${e.to}" by more than ${metres(edgeLengthTolerance(dist))}`,
+        ),
+      );
+    }
+  }
+  return out;
 }
+
+// ---------- zones ----------
+
+/** Zone kinds each entity may sit in. Entities without a `zoneId` are not checked. */
+export const DOCK_ZONE_KINDS: Record<Dock['kind'], readonly ZoneKind[]> = {
+  inbound: ['receiving'],
+  outbound: ['shipping'],
+  both: ['receiving', 'shipping'],
+};
+export const RACK_ZONE_KINDS: readonly ZoneKind[] = ['storage'];
+export const STATION_ZONE_KINDS: readonly ZoneKind[] = ['pick-pack'];
+
+function checkZoneKinds(d: LayoutDraft): string[] {
+  const kinds = new Map(d.zones.map((z) => [z.id, z.kind]));
+  const out: string[] = [];
+  const check = (zoneId: string | undefined, allowed: readonly ZoneKind[], where: string, what: string) => {
+    if (zoneId === undefined) return;
+    const kind = kinds.get(zoneId);
+    // Unknown zones are reported by checkRefs.
+    if (kind === undefined || allowed.includes(kind)) return;
+    out.push(
+      reason(RULES.zoneKindMismatch, `${where}.zoneId`, `${what} sits in ${kind} zone "${zoneId}"; expected ${allowed.join(' or ')}`),
+    );
+  };
+  for (const x of d.docks) check(x.zoneId, DOCK_ZONE_KINDS[x.kind], `docks[${x.id}]`, `${x.kind} dock`);
+  for (const r of d.racks) check(r.zoneId, RACK_ZONE_KINDS, `racks[${r.id}]`, 'rack');
+  for (const s of d.stations) check(s.zoneId, STATION_ZONE_KINDS, `stations[${s.id}]`, `${s.kind} station`);
+  return out;
+}
+
+/** True when `p` lies inside the closed polygon or on its boundary. */
+export function pointInPolygon(p: Point, polygon: readonly Point[]): boolean {
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const a = polygon[i] as Point;
+    const b = polygon[j] as Point;
+    const cross = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x);
+    const onSegment =
+      cross === 0 &&
+      p.x >= Math.min(a.x, b.x) &&
+      p.x <= Math.max(a.x, b.x) &&
+      p.y >= Math.min(a.y, b.y) &&
+      p.y <= Math.max(a.y, b.y);
+    if (onSegment) return true;
+    if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) inside = !inside;
+  }
+  return inside;
+}
+
+// ---------- path graph reachability ----------
 
 function reachable(starts: Iterable<string>, adj: Map<string, string[]>): Set<string> {
   const seen = new Set<string>(starts);
@@ -226,22 +332,57 @@ function checkConnectivity(d: LayoutDraft): string[] {
     }
   }
 
-  const dockNodes = d.docks.map((x) => x.accessNodeId).filter((n) => nodes.has(n));
-  const fromDock = reachable(dockNodes, fwd);
-  const toDock = reachable(dockNodes, back);
-  const served = (n: string) => fromDock.has(n) && toDock.has(n);
-  const why = (n: string) =>
-    !fromDock.has(n)
-      ? `node "${n}" cannot be reached from any dock`
-      : `no route from node "${n}" back to any dock`;
+  const known = (docks: LayoutDraft['docks']) => docks.map((x) => x.accessNodeId).filter((n) => nodes.has(n));
+  const inbound = d.docks.filter((x) => x.kind !== 'outbound');
+  const outbound = d.docks.filter((x) => x.kind !== 'inbound');
+  if (inbound.length === 0) {
+    out.push(reason(RULES.dockDirectionMissing, 'docks', 'no inbound-capable dock; at least one dock of kind "inbound" or "both" is required'));
+  }
+  if (outbound.length === 0) {
+    out.push(reason(RULES.dockDirectionMissing, 'docks', 'no outbound-capable dock; at least one dock of kind "outbound" or "both" is required'));
+  }
+
+  // A missing direction is reported once above, and a direction whose docks all sit on
+  // unknown nodes is reported by checkRefs; neither is repeated for every place.
+  const inboundNodes = known(inbound);
+  const outboundNodes = known(outbound);
+  const fromInbound = inboundNodes.length === 0 ? undefined : reachable(inboundNodes, fwd);
+  const toOutbound = outboundNodes.length === 0 ? undefined : reachable(outboundNodes, back);
+  const why = (n: string): string | undefined =>
+    fromInbound !== undefined && !fromInbound.has(n)
+      ? `node "${n}" cannot be reached from any inbound dock`
+      : toOutbound !== undefined && !toOutbound.has(n)
+        ? `no route from node "${n}" to any outbound dock`
+        : undefined;
 
   for (const r of d.racks) {
-    for (const f of r.faces.filter((f) => nodes.has(f.accessNodeId) && !served(f.accessNodeId))) {
-      out.push(reason(RULES.rackFaceUnreachable, `racks[${r.id}].faces[${f.id}].accessNodeId`, why(f.accessNodeId)));
+    for (const f of r.faces.filter((f) => nodes.has(f.accessNodeId))) {
+      const problem = why(f.accessNodeId);
+      if (problem !== undefined) out.push(reason(RULES.rackFaceUnreachable, `racks[${r.id}].faces[${f.id}].accessNodeId`, problem));
     }
   }
-  for (const s of d.stations.filter((s) => nodes.has(s.accessNodeId) && !served(s.accessNodeId))) {
-    out.push(reason(RULES.stationUnreachable, `stations[${s.id}].accessNodeId`, why(s.accessNodeId)));
+  for (const s of d.stations.filter((s) => nodes.has(s.accessNodeId))) {
+    const problem = why(s.accessNodeId);
+    if (problem !== undefined) out.push(reason(RULES.stationUnreachable, `stations[${s.id}].accessNodeId`, problem));
+  }
+
+  // Charging: a battery vehicle must be able to drive from a dock to a charger and back.
+  const battery = d.fleet.filter((f) => f.battery !== undefined).map((f) => f.id);
+  if (battery.length > 0) {
+    const fromDock = reachable(known(d.docks), fwd);
+    const toDock = reachable(known(d.docks), back);
+    const chargers = d.zones.filter((z) => z.kind === 'charging');
+    const served = d.pathGraph.nodes.some(
+      (n) => fromDock.has(n.id) && toDock.has(n.id) && chargers.some((z) => pointInPolygon(n.position, z.polygon)),
+    );
+    const fleets = `fleet types with a battery: ${battery.join(', ')}`;
+    if (chargers.length === 0) {
+      out.push(reason(RULES.chargingUnreachable, 'zones', `no zone of kind "charging" exists; ${fleets}`));
+    } else if (!served) {
+      out.push(
+        reason(RULES.chargingUnreachable, 'zones', `no path node inside a charging zone is reachable from a dock and back; ${fleets}`),
+      );
+    }
   }
   return out;
 }
@@ -295,7 +436,12 @@ function checkOwnerInputs(d: LayoutDraft): string[] {
   if (d.shifts.length === 0) {
     out.push(reason(RULES.missingOwnerInput, 'shifts', 'at least one shift is required from the owner'));
   }
-  for (const s of d.shifts) owner(s.staff, `shifts[${s.id}].staff`, 'staff count');
+  for (const s of d.shifts) {
+    owner(s.start, `shifts[${s.id}].start`, 'shift start time');
+    owner(s.end, `shifts[${s.id}].end`, 'shift end time');
+    owner(s.days, `shifts[${s.id}].days`, 'shift days');
+    owner(s.staff, `shifts[${s.id}].staff`, 'staff count');
+  }
 
   if (d.costs === undefined) {
     out.push(reason(RULES.missingOwnerInput, 'costs', 'costs (currency, labour rate, vehicle costs) are required from the owner'));
@@ -307,7 +453,7 @@ function checkOwnerInputs(d: LayoutDraft): string[] {
   }
   owner(costs.labourRatePerHour, 'costs.labourRatePerHour', 'labour rate per hour');
   for (const f of d.fleet) {
-    const entry = costs.vehicles.find((v) => v.fleetId === f.id);
+    const entry = costs.vehicles?.find((v) => v.fleetId === f.id);
     owner(entry, `costs.vehicles[${f.id}]`, `vehicle cost for fleet type "${f.id}"`);
   }
   return out;

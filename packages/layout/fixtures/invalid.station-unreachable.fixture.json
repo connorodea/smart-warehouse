@@ -4,7 +4,7 @@
   "description": "Station ST2 can reach a dock but no dock can reach it.",
   "expectValid": false,
   "expectReasons": [
-    "station-unreachable: stations[ST2].accessNodeId: node \"N-ST2\" cannot be reached from any dock"
+    "station-unreachable: stations[ST2].accessNodeId: node \"N-ST2\" cannot be reached from any inbound dock"
   ],
   "layout": {
     "schemaVersion": 1,
@@ -383,6 +383,15 @@
           }
         },
         {
+          "id": "N-CHG",
+          "position": {
+            "x": 7.5,
+            "y": 12,
+            "unit": "m",
+            "source": "cad"
+          }
+        },
+        {
           "id": "N-ST2",
           "position": {
             "x": 20,
@@ -443,7 +452,7 @@
           "from": "N-OUT",
           "to": "N-R1B",
           "length": {
-            "value": 20.1,
+            "value": 20.22,
             "unit": "m",
             "source": "derived"
           },
@@ -458,7 +467,37 @@
           "from": "N-R1B",
           "to": "N-IN",
           "length": {
-            "value": 10.4,
+            "value": 10.44,
+            "unit": "m",
+            "source": "derived"
+          },
+          "capacity": {
+            "value": 1,
+            "unit": "vehicles",
+            "source": "derived"
+          }
+        },
+        {
+          "id": "E-CHG1",
+          "from": "N-R1B",
+          "to": "N-CHG",
+          "length": {
+            "value": 4.72,
+            "unit": "m",
+            "source": "derived"
+          },
+          "capacity": {
+            "value": 1,
+            "unit": "vehicles",
+            "source": "derived"
+          }
+        },
+        {
+          "id": "E-CHG2",
+          "from": "N-CHG",
+          "to": "N-R1B",
+          "length": {
+            "value": 4.72,
             "unit": "m",
             "source": "derived"
           },
@@ -473,7 +512,7 @@
           "from": "N-ST2",
           "to": "N-OUT",
           "length": {
-            "value": 10,
+            "value": 11.18,
             "unit": "m",
             "source": "derived"
           },

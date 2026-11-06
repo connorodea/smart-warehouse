@@ -49,10 +49,23 @@ export const PointSchema = z.strictObject({
 export type Point = z.infer<typeof PointSchema>;
 
 export const MetresSchema = quantity('m');
-export const PositiveMetresSchema = positiveQuantity('m');
 export const SecondsSchema = quantity('s');
+/** Seconds that must be strictly greater than zero (service-time parameters). */
+export const PositiveSecondsSchema = positiveQuantity('s');
 export const HoursSchema = positiveQuantity('h');
-export const DegreesSchema = quantity('deg');
+/**
+ * Plan-view rotation. Any finite angle in (-360, 360] is accepted, so a CAD file that
+ * writes -90 does not have to be normalised first. Consumers that need one canonical
+ * angle normalise it themselves; the validator does not rewrite owner or CAD values.
+ */
+export const DegreesSchema = z.strictObject({
+  value: z
+    .number()
+    .finite()
+    .refine((v) => v > -360 && v <= 360, 'rotation must be in (-360, 360] degrees'),
+  unit: z.literal('deg'),
+  source: SourceSchema,
+});
 export const PercentSchema = z.strictObject({
   value: z.number().finite().min(0).max(100),
   unit: z.literal('%'),

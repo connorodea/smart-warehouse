@@ -11,6 +11,13 @@ import stationUnreachable from '../fixtures/invalid.station-unreachable.fixture.
 import fleetEmpty from '../fixtures/invalid.fleet-empty.fixture.json';
 import missingOwnerInput from '../fixtures/invalid.missing-owner-input.fixture.json';
 import ownerInputSource from '../fixtures/invalid.owner-input-source.fixture.json';
+import selfLoopEdge from '../fixtures/invalid.self-loop-edge.fixture.json';
+import edgeLengthMismatch from '../fixtures/invalid.edge-length-mismatch.fixture.json';
+import duplicateEdge from '../fixtures/invalid.duplicate-edge.fixture.json';
+import zoneKindMismatch from '../fixtures/invalid.zone-kind-mismatch.fixture.json';
+import dockDirectionMissing from '../fixtures/invalid.dock-direction-missing.fixture.json';
+import chargingUnreachable from '../fixtures/invalid.charging-unreachable.fixture.json';
+import { RULES } from '../src';
 
 type Fixture = { _fixture: string; expectValid: boolean; expectReasons: string[]; layout: unknown };
 
@@ -25,7 +32,15 @@ const invalid: Record<string, Fixture> = {
   fleetEmpty,
   missingOwnerInput,
   ownerInputSource,
+  selfLoopEdge,
+  edgeLengthMismatch,
+  duplicateEdge,
+  zoneKindMismatch,
+  dockDirectionMissing,
+  chargingUnreachable,
 };
+
+const kebab = (s: string) => s.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
 
 describe('fixtures', () => {
   it('every fixture is marked test-only', () => {
@@ -37,6 +52,10 @@ describe('fixtures', () => {
     expect(r).toEqual({ ok: true, layout: valid.layout });
   });
 
+  it('every rule code has exactly one invalid fixture named after it', () => {
+    expect(Object.keys(invalid).map(kebab).sort()).toEqual(Object.values(RULES).sort());
+  });
+
   for (const [name, f] of Object.entries(invalid)) {
     it(`${name}: rejected with exactly the expected reasons`, () => {
       expect(f.expectValid).toBe(false);
@@ -44,6 +63,8 @@ describe('fixtures', () => {
       expect(r.ok).toBe(false);
       if (r.ok) return;
       expect(r.reasons).toEqual(f.expectReasons);
+      // Each invalid fixture breaks exactly the one rule it is named after.
+      expect(new Set(r.reasons.map((x) => x.split(':')[0]))).toEqual(new Set([kebab(name)]));
     });
   }
 });

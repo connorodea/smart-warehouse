@@ -7,6 +7,7 @@
   "packageManager": "pnpm@10.33.1",
   "scripts": {
     "dev": "pnpm --filter @twin/viewer dev",
+    "preview": "pnpm --filter @twin/viewer preview",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "build": "pnpm -r build"

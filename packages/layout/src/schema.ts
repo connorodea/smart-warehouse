@@ -11,6 +11,7 @@ import {
   PercentSchema,
   PointSchema,
   PositiveCountSchema,
+  PositiveSecondsSchema,
   SecondsSchema,
   SourceSchema,
   SpeedSchema,
@@ -77,13 +78,18 @@ export type Rack = z.infer<typeof RackSchema>;
 
 // ---------- stations ----------
 
+/**
+ * Service time per order line. Every parameter is strictly positive except a uniform
+ * `min`, which may be 0 (some lines take no time) as long as `max` is positive. A zero
+ * mean or zero spread describes no real station; use `fixed` for a constant time.
+ */
 export const ServiceTimeSchema = z.discriminatedUnion('kind', [
-  z.strictObject({ kind: z.literal('fixed'), value: SecondsSchema }),
-  z.strictObject({ kind: z.literal('exponential'), mean: SecondsSchema }),
-  z.strictObject({ kind: z.literal('normal'), mean: SecondsSchema, stdDev: SecondsSchema }),
-  z.strictObject({ kind: z.literal('lognormal'), mean: SecondsSchema, stdDev: SecondsSchema }),
+  z.strictObject({ kind: z.literal('fixed'), value: PositiveSecondsSchema }),
+  z.strictObject({ kind: z.literal('exponential'), mean: PositiveSecondsSchema }),
+  z.strictObject({ kind: z.literal('normal'), mean: PositiveSecondsSchema, stdDev: PositiveSecondsSchema }),
+  z.strictObject({ kind: z.literal('lognormal'), mean: PositiveSecondsSchema, stdDev: PositiveSecondsSchema }),
   z
-    .strictObject({ kind: z.literal('uniform'), min: SecondsSchema, max: SecondsSchema })
+    .strictObject({ kind: z.literal('uniform'), min: SecondsSchema, max: PositiveSecondsSchema })
     .refine((d) => d.min.value <= d.max.value, { message: 'uniform min must be <= max', path: ['min'] }),
 ]);
 export type ServiceTime = z.infer<typeof ServiceTimeSchema>;
@@ -167,15 +173,29 @@ export type FleetType = z.infer<typeof FleetTypeSchema>;
 // start/end/days are not numeric, so they carry no `source` (decision ledger D-006).
 const HhMm = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'time must be HH:MM (24h)');
 
-export const ShiftSchema = z.strictObject({
+const ShiftFields = z.strictObject({
   id: IdSchema,
   name: z.string().optional(),
   start: HhMm,
-  /** May be earlier than `start` for a shift that crosses midnight. */
+  /** May be earlier than `start` for a shift that crosses midnight. Never equal to `start`. */
   end: HhMm,
-  days: z.array(z.enum(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'])).min(1),
+  days: z
+    .array(z.enum(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']))
+    .min(1)
+    .refine((days) => new Set(days).size === days.length, 'each day may appear only once'),
   staff: PositiveCountSchema,
 });
+
+/**
+ * `start == end` is rejected: it is ambiguous between a zero-length shift and a
+ * 24-hour shift, and neither reading is safe to guess. A 24-hour operation is
+ * written as two or more shifts. Applied to the draft too, when both times exist.
+ */
+const shiftHasLength = (s: { start?: string; end?: string }) =>
+  s.start === undefined || s.end === undefined || s.start !== s.end;
+const shiftLengthIssue = { message: 'shift end must differ from start (a zero-length shift is not allowed)', path: ['end'] };
+
+export const ShiftSchema = ShiftFields.refine(shiftHasLength, shiftLengthIssue);
 export type Shift = z.infer<typeof ShiftSchema>;
 
 // ---------- costs ----------
@@ -226,7 +246,9 @@ export const LayoutDraftSchema = LayoutSchema.extend({
   fleet: z.array(
     FleetTypeSchema.partial({ count: true, speed: true, loadTime: true, unloadTime: true, battery: true }),
   ),
-  shifts: z.array(ShiftSchema.partial({ staff: true })),
-  costs: CostsSchema.partial({ currency: true, labourRatePerHour: true }).optional(),
+  shifts: z.array(
+    ShiftFields.partial({ start: true, end: true, days: true, staff: true }).refine(shiftHasLength, shiftLengthIssue),
+  ),
+  costs: CostsSchema.partial({ currency: true, labourRatePerHour: true, vehicles: true }).optional(),
 });
 export type LayoutDraft = z.infer<typeof LayoutDraftSchema>;

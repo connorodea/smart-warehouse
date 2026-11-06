@@ -163,7 +163,7 @@ smart-warehouse/
 
 ### Prerequisites
 - Node.js (>= 18.0.0)
-- npm or pnpm
+- pnpm (the repo is a pnpm workspace; npm and yarn are not supported)
 
 ### Installation & Run
 

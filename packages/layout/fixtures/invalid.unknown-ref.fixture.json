@@ -362,6 +362,15 @@
             "unit": "m",
             "source": "cad"
           }
+        },
+        {
+          "id": "N-CHG",
+          "position": {
+            "x": 7.5,
+            "y": 12,
+            "unit": "m",
+            "source": "cad"
+          }
         }
       ],
       "edges": [
@@ -415,7 +424,7 @@
           "from": "N-OUT",
           "to": "N-R1B",
           "length": {
-            "value": 20.1,
+            "value": 20.22,
             "unit": "m",
             "source": "derived"
           },
@@ -430,7 +439,37 @@
           "from": "N-R1B",
           "to": "N-IN",
           "length": {
-            "value": 10.4,
+            "value": 10.44,
+            "unit": "m",
+            "source": "derived"
+          },
+          "capacity": {
+            "value": 1,
+            "unit": "vehicles",
+            "source": "derived"
+          }
+        },
+        {
+          "id": "E-CHG1",
+          "from": "N-R1B",
+          "to": "N-CHG",
+          "length": {
+            "value": 4.72,
+            "unit": "m",
+            "source": "derived"
+          },
+          "capacity": {
+            "value": 1,
+            "unit": "vehicles",
+            "source": "derived"
+          }
+        },
+        {
+          "id": "E-CHG2",
+          "from": "N-CHG",
+          "to": "N-R1B",
+          "length": {
+            "value": 4.72,
             "unit": "m",
             "source": "derived"
           },
