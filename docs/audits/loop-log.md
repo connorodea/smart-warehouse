@@ -44,3 +44,30 @@
 - **Next:** Tick 3 (orchestrator): resume `unit/scaffold-layout` in place, fix audit-2 items 1–6 (+ P2 if cheap),
   regenerate lockfile, gate green, commit + push the branch, cold-verify. Run every subagent FOREGROUND.
 - **Audit base for tick 4:** `feat/twin-v1` @ d4aebf2.
+
+### Tick 3 — ORCHESTRATOR — 2026-11-06T14:16:50-0700
+
+- **What:** Resumed the stranded `unit/scaffold-layout` (spec §9 step 1) in place. Fixed audit-2 items 1–6, 8–10;
+  item 7 exempted (D-006). Committed `7e9c185`, cold verifier #1 FAILED it (item 7 claimed fixed but not; my
+  commit message was wrong). Fixed with ledger D-005..D-007 → `029327d`. Cold verifier #2 (new agent) VERIFIED at
+  `029327d`. Merged into `feat/twin-v1` (`2a4b37f`), added `coverage/` to `.gitignore` (`d9eff05`), pushed.
+- **Why:** Tick 2 "Next": finish step 1 before anything depends on the Layout schema.
+- **Evidence:**
+  - Builder gate (scratch copy on internal SSD): `pnpm -r typecheck` rc=0, `pnpm -r test` rc=0 (45/45, 100% cov),
+    `pnpm -r build` rc=0, `pnpm install --frozen-lockfile` rc=0.
+  - Verifier 1: `verify/scaffold-layout` @ 3468b7e — `VERDICT: FAILED at 7e9c185` (P1: audit item 7).
+  - Verifier 2: `verify/scaffold-layout-2` @ e7f5c68 — `VERDICT: VERIFIED at 029327d`; 4 P2 left (README_EN.md:166
+    "npm or pnpm"; missing `costs.vehicles`/shift times report as `schema:` not `missing-owner-input:`;
+    `PositiveMetresSchema` exported unused; `DegreesSchema` rejects negative rotation — CAD step must normalise).
+  - Root gate on `feat/twin-v1` @ 2a4b37f (main checkout): install --frozen-lockfile rc=0, typecheck rc=0, test rc=0
+    (45/45), build rc=0.
+  - DeepSeek units: 0 (step 1 was a resume of judgment-heavy Claude work).
+  - Infra: `pnpm install` on the Toshiba worktree stalled (~1 pkg/5 s; machine load avg ~120). Fresh install on the
+    internal SSD took 13m49s. Gates now run in rsync copies on the SSD with `--store-dir ~/Library/pnpm/store/v10`
+    (store now warm). Branch-scope hook re-fires on every new-scope retry: commit with `-F <file>` written via the
+    Write tool (D-005).
+  - Leftover tmp verifier worktrees (detached, not removed): `verify-scaffold-layout-tmp`, `verify2-scaffold-layout-tmp`.
+- **Next:** Tick 4 (AUDITOR): diff `d4aebf2..d9eff05`. Tick 5 (ORCHESTRATOR): run two lanes in parallel —
+  §9 step 2 `packages/sim` core (Claude builder, foreground) and §9 step 3 viewer English i18n (DeepSeek, one unit per
+  Vue component with Chinese strings) — plus the 4 P2s above as one small Claude unit.
+- **Audit base for tick 4:** `feat/twin-v1` @ d4aebf2 → d9eff05.
