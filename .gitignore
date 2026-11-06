@@ -17,3 +17,5 @@ pnpm-debug.log*
 
 # Remotion 视频工程源码（不入库，仅保留视频与介绍）
 video-intro/
+
+coverage/
