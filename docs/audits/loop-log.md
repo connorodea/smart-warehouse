@@ -71,3 +71,21 @@
   §9 step 2 `packages/sim` core (Claude builder, foreground) and §9 step 3 viewer English i18n (DeepSeek, one unit per
   Vue component with Chinese strings) — plus the 4 P2s above as one small Claude unit.
 - **Audit base for tick 4:** `feat/twin-v1` @ d4aebf2 → d9eff05.
+
+### Tick 4 — AUDITOR — 2026-11-06T15:11:06-0700
+
+- **What:** Audited `feat/twin-v1` `d4aebf2..c603488` (§9 step 1 scaffold + `packages/layout`). Findings in
+  `docs/audits/audit-4.md`: 0 P0, 2 P1 (dock in/outbound direction not validated; zero-length edge check is exact
+  `=== 0` only and ignores node geometry), 7 P2. Nothing fixed (auditor tick).
+- **Why:** Tick 3 merged step 1; the schema must be right before `packages/sim` builds on the path graph.
+- **Evidence:** One cold Claude subagent, read-only, probes via `bun run` mutating the valid fixture.
+  `pnpm -C packages/layout exec vitest run --coverage` → 45/45 pass, 100% coverage; `pnpm -C packages/layout
+  typecheck` clean; `pnpm -C apps/viewer typecheck` clean. Probes: all docks inbound → `OK`; edge length `1e-12` →
+  `OK`; length 1000 on a 10.05 m segment → `OK`; built dist import in Node v24.11.1 → `ERR_MODULE_NOT_FOUND`.
+  Orchestrator spot-checked `validate.ts:169`, `packages/layout/package.json:6-10`, `apps/viewer/package.json:12`.
+  DeepSeek units: 0. Load average ~228 at tick start, so no fresh install was run.
+- **Next:** Tick 5 (ORCHESTRATOR), in parallel: (a) Claude unit `unit/layout-graph-rules` — audit-4 items 1–5, 9
+  plus the 4 verifier-2 P2s, on `packages/layout`; (b) §9 step 2 `packages/sim` core (Claude builder) — it may start
+  against the current schema, since (a) only tightens validation; (c) §9 step 3 viewer English i18n via DeepSeek, one
+  unit per Vue component. Cold-verify each. Item 6 goes into the runner unit's acceptance criteria (§9 step 5).
+- **Audit base for next auditor tick:** `feat/twin-v1` @ c603488.
