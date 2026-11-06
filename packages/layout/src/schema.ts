@@ -164,6 +164,7 @@ export type FleetType = z.infer<typeof FleetTypeSchema>;
 
 // ---------- shifts ----------
 
+// start/end/days are not numeric, so they carry no `source` (decision ledger D-006).
 const HhMm = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'time must be HH:MM (24h)');
 
 export const ShiftSchema = z.strictObject({

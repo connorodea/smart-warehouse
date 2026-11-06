@@ -36,3 +36,32 @@ Decisions made without asking, per the `/overnight` decision-ledger rule. Each o
 - **Chosen default + why:** pinned `-1017` snapshot, matching the earlier rule to use snapshots, not
   rolling aliases, so results stay reproducible across 24h.
 - **Reversal cost:** change `--model` in `TICK.md`.
+
+## D-005 — Commit messages past the branch-scope hook
+
+- **Decision:** how to commit a unit whose honest scope (e.g. `layout`) is new on a branch that
+  forks from `feat/twin-v1` (whose only scope since main is `spec`).
+- **Options:** (a) mislabel the scope as `spec`; (b) open the unit on a branch off main (breaks D-003);
+  (c) keep the honest scope, state in the tick why it belongs, and pass the message with `git commit -F <file>`
+  written by a separate tool call (the hook re-fires on every retry by design).
+- **Chosen default + why:** (c). A unit branch holds exactly one spec §9 unit, so the scope question
+  the hook asks is answered by construction. Mislabelling would corrupt history.
+- **Reversal cost:** none; future commits can use any form.
+
+## D-006 — Shift `start` / `end` / `days` carry no `source`
+
+- **Decision:** audit-2 item 7: whether shift times and days need `{ value, source }` wrappers.
+- **Options:** (a) wrap them like quantities (touches every fixture and test); (b) exempt them.
+- **Chosen default + why:** (b). Spec §3 says "every *numeric* field carries source". `start`/`end` are
+  `HH:MM` strings and `days` is a list of day names, not numbers. They are owner inputs by definition: no
+  CAD file has shift times. `staff`, the shift's only number, is sourced.
+- **Reversal cost:** change `ShiftSchema` to wrap the three fields and update fixtures (~30 min).
+
+## D-007 — `derived` is accepted as the source of an owner input
+
+- **Decision:** whether an owner-input field may say `source: "derived"`.
+- **Options:** (a) only `owner`; (b) `owner` or `derived` (reject only `cad`).
+- **Chosen default + why:** (b). Spec §3 bans only CAD provenance for owner inputs. `derived` covers
+  values computed from other owner inputs (e.g. a rate from a stated shift volume), where the derivation
+  lives with the producer.
+- **Reversal cost:** one-line change in `checkOwnerInputs` plus fixtures that use `derived`.
